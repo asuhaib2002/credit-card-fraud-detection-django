@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Credit Card Fraud Detection</title>
+</head>
+<body>
+    <h1>Credit Card Fraud Detection</h1>
+    <form method="post" action="{% url 'predict' %}">
+        {% csrf_token %}
+        <label for="median">Median:</label><br>
+        <input type="text" id="median" name="median"><br><br>
+        <label for="price">Price:</label><br>
+        <input type="text" id="price" name="price"><br><br>
+        <label for="distance">Distance:</label><br>
+        <input type="text" id="distance" name="distance"><br><br>
+        <label for="purchase_method">Purchase Method:</label><br>
+        <input type="text" id="purchase_method" name="purchase_method"><br><br>
+        <input type="submit" value="Predict">
+    </form>
+    <div id="result"></div>
+    <script>
+        document.querySelector('form').onsubmit = function(event) {
+            event.preventDefault();
+            fetch("{% url 'predict' %}", {
+                method: 'POST',
+                body: new FormData(this),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': this.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = 'Result: ' + data.result;
+            });
+        };
+    </script>
+</body>
+</html>
